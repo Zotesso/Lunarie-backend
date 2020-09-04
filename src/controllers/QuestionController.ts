@@ -12,12 +12,31 @@ export default class QuestionController {
         }
         const question = await db('questions')
             .where('subject', '=', subject)
-            .where('id', '=', id)
-            .select(['questions.*']);
+            .select(['questions.*'])
+            .limit(1)
+            .offset(Number(id) - 1);
 
             return response.json(question);
     }
+    async index(request: Request, response: Response){
+    const index =  await db('questions')
+    .select(['*']);
 
+    return response.json(index);
+    }
+
+    async indexTotal(request: Request, response: Response){
+
+        const total = await db('questions')
+            .count('subject', {as: 'total'})
+            .groupBy('subject')
+            .select('subject')
+            ;
+
+        return response.json(
+                total
+        )
+    }
     async create(request: Request, response: Response){
         const {
             questionDialog,
